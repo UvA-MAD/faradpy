@@ -8,9 +8,13 @@ def quality_trim_read(sr, window_len, min_qual):
     Trim one base at a time untill all bases in the window
     have quality equal or above ``min_qual``
 
-    :param sr: BioPython's ``SeqRecord`` object
+    :param sr: Sequencing read to be trimmed.
+    :type name: Bio.SeqRecord.SeqRecord.
     :param window_len: lenght of the sliding window
-    :param min_qual: minimal quality used for trimming
+    :type window_len: int.
+    :param min_qual: Minimal quality used for trimming.
+    :type min_qual: int.
+    :returns: Bio.SeqRecord.SeqRecord -- trimmed sequencing read.
     """
     # get quality values of the read
     quals = sr.letter_annotations['phred_quality']
