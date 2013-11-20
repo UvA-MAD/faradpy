@@ -11,7 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-
+.. automodule:: farad.fq
+   :members:
 
 Indices and tables
 ==================

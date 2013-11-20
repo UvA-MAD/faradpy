@@ -33,6 +33,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="#">faradpy 0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
@@ -49,6 +52,30 @@
 <ul class="simple">
 </ul>
 </div>
+<span class="target" id="module-farad.fq"></span><dl class="function">
+<dt id="farad.fq.quality_trim_read">
+<tt class="descclassname">farad.fq.</tt><tt class="descname">quality_trim_read</tt><big>(</big><em>sr</em>, <em>window_len</em>, <em>min_qual</em><big>)</big><a class="headerlink" href="#farad.fq.quality_trim_read" title="Permalink to this definition">¶</a></dt>
+<dd><p>Trim read with the moving window from the end.</p>
+<p>Trim one base at a time untill all bases in the window
+have quality equal or above <tt class="docutils literal"><span class="pre">min_qual</span></tt></p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>sr</strong> &#8211; Sequencing read to be trimmed.</li>
+<li><strong>window_len</strong> (<em>int.</em>) &#8211; lenght of the sliding window</li>
+<li><strong>min_qual</strong> (<em>int.</em>) &#8211; Minimal quality used for trimming.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">Bio.SeqRecord.SeqRecord &#8211; trimmed sequencing read.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
 </div>
 <div class="section" id="indices-and-tables">
 <h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
@@ -101,6 +128,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="genindex.html" title="General Index"
              >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
         <li><a href="#">faradpy 0.1.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
