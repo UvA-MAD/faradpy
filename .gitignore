@@ -1,2 +1,6 @@
+# compiled python code
 *.pyc
 *.pyo
+
+# sphinx build folder
+docs/build

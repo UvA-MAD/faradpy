@@ -1,4 +1,4 @@
-# from Bio import SeqIO
+from Bio import SeqIO
 from utils import window
 
 
@@ -9,7 +9,7 @@ def quality_trim_read(sr, window_len, min_qual):
     have quality equal or above ``min_qual``
 
     :param sr: Sequencing read to be trimmed.
-    :type name: Bio.SeqRecord.SeqRecord.
+    :type sr: Bio.SeqRecord.SeqRecord.
     :param window_len: lenght of the sliding window
     :type window_len: int.
     :param min_qual: Minimal quality used for trimming.
@@ -32,3 +32,23 @@ def quality_trim_read(sr, window_len, min_qual):
     else:
         trimmed = sr
     return(trimmed)
+
+
+def quality_trim_fastq(fastq_in, fastq_out, window_len, min_qual):
+    """Trim all reads in provided fastq file.
+
+    Iterate over all reads in the file.
+    Trim trailing bases which using sliding window.
+
+    :param fastq_in: Input fastq file.
+    :type fastq_in: file.
+    :param fastq_out: Output fastq file.
+    :type fastq_out: file.
+    :param window_len: Size of sliding window.
+    :type window_len: int.
+    """
+    # parse input fastq
+    seqs = SeqIO.parse(fastq_in, 'fastq')
+    trimmed_seqs = [quality_trim_read(s, window_len, min_qual)
+                    for s in seqs]
+    SeqIO.write(trimmed_seqs, fastq_out, 'fastq')
