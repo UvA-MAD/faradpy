@@ -3,7 +3,7 @@ import os
 import sys
 import Bio
 from Bio import SeqIO
-from nose.tools import assert_equal, assert_is_instance
+from nose.tools import assert_equal, assert_is_instance, assert_true
 
 # import tested package
 sys.path.append('../')
@@ -21,12 +21,13 @@ class TestFaradFq:
         """Teardown."""
         pass
 
+    # load test fastq
+    test_script_path = os.path.split(os.path.abspath(__file__))[0]
+    fq_path = os.path.join(test_script_path, 'sample1.fq')
+
     def test_qualit_trim_read(self):
         """Test quality trimming with sliding window"""
-        # load test fastq
-        test_script_path = os.path.split(os.path.abspath(__file__))[0]
-        fq_path = os.path.join(test_script_path, 'sample1.fq')
-        sreads = [r for r in SeqIO.parse(fq_path, 'fastq')]
+        sreads = [r for r in SeqIO.parse(self.fq_path, 'fastq')]
 
         # test trimming
         window_len = 3
@@ -41,3 +42,18 @@ class TestFaradFq:
 
         # make sure that the return object is Bio.SeqRecord.SeqRecord
         assert_is_instance(trimmed_sread2, Bio.SeqRecord.SeqRecord)
+
+    def test_quality_trim_fastq(self):
+        """Test quality trimming of all reads in fastq file."""
+        # run trimming on example file
+        fastq_output = os.path.join(self.test_script_path, 'trimmed_reads.fq')
+        window_len = 3
+        min_qual = 20
+        ffq.quality_trim_fastq(self.fq_path, fastq_output,
+                               window_len, min_qual)
+        # check if file has been created
+        file_exists = os.path.exists(fastq_output)
+        assert_true(file_exists)
+
+        # clean up
+        os.remove(fastq_output)
