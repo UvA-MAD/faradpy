@@ -69,5 +69,18 @@ def filter_by_length_fastq(fastq_in, fastq_out, min_len=1, max_len=None):
     :type min_len: int.
     :param max_len: Maximal length of the read. Defaults to length of the read.
     """
+    # get an iterator from the reads file
+    seqs = SeqIO.parse(fastq_in, 'fastq')
 
-
+    # if min_len and max_len have not been specified
+    # write reads as they are
+    if (min_len == 1 and max_len is None):
+        filt_seqs = [s for s in seqs]
+    elif (max_len is None):
+        # filter longer or equal to min_len
+        filt_seqs = [s for s in seqs if len(s) >= min_len]
+    else:
+        # filter reads within a range between min and max _len
+        filt_seqs = [s for s in seqs
+                     if (len(s) >= min_len and len(s) <= max_len)]
+    SeqIO.write(filt_seqs, fastq_out, 'fastq')

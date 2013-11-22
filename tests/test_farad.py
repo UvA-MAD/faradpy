@@ -84,3 +84,46 @@ class TestFaradFq:
                              in open(fastq_output, 'r').readlines()
                              if line.startswith('@')])
         nt.assert_equal(n_input_reads, n_output_reads)
+
+        # check filtering with upper bound (shorter than)
+        max_len = 75
+        ffq.filter_by_length_fastq(self.sample_fq,
+                                   fastq_output,
+                                   max_len=max_len)
+        filt_seqs = [seq for seq in SeqIO.parse(fastq_output, 'fastq')]
+        filt_lengths = [len(seq) for seq in filt_seqs]
+        # nb of reads above threshold should be zero
+        n_long = len([l for l in filt_lengths if l > max_len])
+        nt.assert_equal(n_long, 0)
+        # also knowing what's in the fq file there should be 2 seqs
+        # shorter than 75
+        nt.assert_equal(len(filt_seqs), 2)
+
+        # check filtering with lower bound (longer than)
+        min_len = 70
+        ffq.filter_by_length_fastq(self.sample_fq,
+                                   fastq_output,
+                                   min_len=min_len)
+        filt_seqs = [seq for seq in SeqIO.parse(fastq_output, 'fastq')]
+        filt_lengths = [len(seq) for seq in filt_seqs]
+        n_short = len([l for l in filt_lengths if l < min_len])
+        nt.assert_equal(n_short, 0)
+        # also knowing what's in the fq file there should be 2 seqs
+        # longer than 70
+        nt.assert_equal(len(filt_seqs), 2)
+
+        # check filtering with range
+        min_len = 20
+        max_len = 50
+        ffq.filter_by_length_fastq(self.sample_fq,
+                                   fastq_output,
+                                   min_len=min_len,
+                                   max_len=max_len)
+        filt_seqs = [seq for seq in SeqIO.parse(fastq_output, 'fastq')]
+        filt_lengths = [len(seq) for seq in filt_seqs]
+        n_out_range = len([l for l in filt_lengths
+                          if (l < min_len and l > max_len)])
+        nt.assert_equal(n_out_range, 0)
+        # also knowing what's in the fq file there should be 1 seq
+        # in range
+        nt.assert_equal(len(filt_seqs), 1)
