@@ -1,5 +1,5 @@
 from Bio import SeqIO
-from utils import window
+from .utils import window
 
 
 def quality_trim_read(sr, window_len, min_qual):
