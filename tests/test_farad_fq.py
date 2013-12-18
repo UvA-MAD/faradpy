@@ -16,9 +16,59 @@ import farad.fq as ffq
 TEST_DIR = os.path.split(os.path.abspath(__file__))[0]
 SAMPLE_FQ1 = os.path.join(TEST_DIR, 'sample1.fq')
 
+
+class TestDownsample:
+    """Test downsample function in fq module"""
+
+    def setup(self):
+        """Create objects needed for testing."""
+        pass
+
+    def teardown(self):
+        """Teardown.
+
+        Remove files created during the test.
+        """
+
+        # all files created during test should start with 'test_'
+        file_pattern = r'^test_.*\.fq$'
+        for_removal = [f for f in os.listdir(TEST_DIR)
+                       if re.search(file_pattern, f)]
+        [os.remove(os.path.join(TEST_DIR, f)) for f in for_removal]
+
+    def test_raised_error_when_invalid_input_fastq(self):
+        """Should raise an exeption when input fastq not valid"""
+        fqin = 'nonexistent.fq'
+        N = 10
+        fqout = os.path.join(TEST_DIR, 'test_invalid.fq')
+        nt.assert_raises(FileNotFoundError, ffq.downsample, fqin, N, fqout)
+
+    def test_raised_error_when_sample_larger_than_input(self):
+        """Should raise an exception if sample larger than input."""
+
+        N = 15
+        fqout = os.path.join(TEST_DIR, 'test_downsample.fq')
+        nt.assert_raises(ValueError,
+                         ffq.downsample, SAMPLE_FQ1, N, fqout)
+
+    def test_error_if_N_not_integer(self):
+        """Should raise an exception if N is not an integer."""
+        N = 'not_an_int'
+        fqout = os.path.join(TEST_DIR, 'test_sample_not_int.fq')
+        nt.assert_raises(TypeError,
+                         ffq.downsample, SAMPLE_FQ1, N, fqout)
+
+    def test_error_when_output_path_invalid(self):
+        """ Should raise error when invalid output path."""
+        N = 1
+        fqout = os.path.join(TEST_DIR, 'invalid', 'test_invalid_path.fq')
+        nt.assert_raises(FileNotFoundError,
+                         ffq.downsample, SAMPLE_FQ1, N, fqout)
+
+
 class TestQualityTrimRead:
-    """ Test quality_trim_read function in fq_module"""
-        
+    """ Test quality_trim_read function in fq module"""
+
     # read in the reads from fastq as list
     sreads = [r for r in SeqIO.parse(SAMPLE_FQ1, 'fastq')]
     # trimming settings
@@ -40,15 +90,16 @@ class TestQualityTrimRead:
                                                self.window_len,
                                                self.min_qual)
         nt.assert_equal(len(trimmed_sread2), 28)
- 
+
     def test_return_value(self):
         """test if an object returned by quality_trim_read is
         of class Bio.SeqRecord.SeqRecord"""
 
         trimmed_sread = ffq.quality_trim_read(self.sreads[0],
-                                               self.window_len,
-                                               self.min_qual)
+                                              self.window_len,
+                                              self.min_qual)
         nt.assert_is_instance(trimmed_sread, Bio.SeqRecord.SeqRecord)
+
 
 class TestQualityTrimFastq:
     """Test quality_trim_fastq function in fq module."""
@@ -80,6 +131,7 @@ class TestQualityTrimFastq:
         # check if file has been created
         file_exists = os.path.exists(fastq_output)
         nt.assert_true(file_exists)
+
 
 class TestFilterByLengthFastq:
     """ Test test_filter_by_length_fastq function in fq module."""
@@ -123,7 +175,7 @@ class TestFilterByLengthFastq:
                                  if line.startswith('@')])
 
         with open(self.fastq_output, 'r') as fh:
-           n_output_reads = len([line for line in fh
+            n_output_reads = len([line for line in fh
                                  if line.startswith('@')])
 
         nt.assert_equal(n_input_reads, n_output_reads)
@@ -144,7 +196,6 @@ class TestFilterByLengthFastq:
         # also knowing what's in the fq file there should be 2 seqs
         # shorter than 75
         nt.assert_equal(len(filt_seqs), 2)
-
 
     def test_filtering_with_lower_bound(self):
         """Test filter_by_length_fastq with lower bound

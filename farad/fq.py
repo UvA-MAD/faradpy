@@ -1,5 +1,59 @@
 from Bio import SeqIO
 from .utils import window
+import logging
+import random
+
+
+# setup module logger
+logger = logging.getLogger(__name__)
+FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
+# logger.setLevel(logging.INFO)
+handler = logging.StreamHandler()
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter(FORMAT)
+handler.setFormatter(formatter)
+logger.addHandler(handler)
+
+
+def downsample(fqin, N, fqout):
+    """Downsample fastq file to N reads.
+
+    Sample rendomly N reads from fqin file
+    and write results in fqout.
+
+    :param fqin: input fastq file
+    :type fqin: file handle or path
+    :param N: sample size
+    :type N: int.
+    :param fqout: output fastq file
+    :type fqout: file handle or path
+    :raises: FileNotFoundError, ValueError, TypeError
+    """
+
+    # read in quality reads into a list
+    try:
+        input_reads = [r for r in SeqIO.parse(fqin, 'fastq')]
+    except FileNotFoundError:
+        logger.error('File with input reads not found')
+        raise
+
+    # fetch a sample
+    try:
+        sample_reads = random.sample(input_reads, N)
+    except ValueError:
+        logger.error('Sample size should be between zero'
+                     ' and the number of reads in fq file.')
+        raise
+    except TypeError:
+        logger.error('Sample size should be an integer.')
+        raise
+
+    # write sample to file fqout
+    try:
+        SeqIO.write(sample_reads, fqout, 'fastq')
+    except FileNotFoundError:
+        logger.error('Provided path for sample reads is not valid.')
+        raise
 
 
 def quality_trim_read(sr, window_len, min_qual):
