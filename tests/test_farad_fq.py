@@ -1,4 +1,4 @@
-"""Tests for farad."""
+"""Tests for farad.fq module"""
 import os
 import re
 import sys
@@ -6,9 +6,8 @@ import Bio
 from Bio import SeqIO
 import nose.tools as nt
 
-# import tested package
+# import tested module
 sys.path.append('../')
-# import farad.utils as futils
 import farad.fq as ffq
 
 
@@ -30,7 +29,7 @@ class TestDownsample:
         Remove files created during the test.
         """
 
-        # all files created during test should start with 'test_'
+        # files created during test start with 'test_'
         file_pattern = r'^test_.*\.fq$'
         for_removal = [f for f in os.listdir(TEST_DIR)
                        if re.search(file_pattern, f)]

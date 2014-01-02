@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def plot_read_quality(fqin, plotout):
+def plot_qualities_along_read(fqin, plotout):
     """Make a boxplot with quality distribution along the read.
 
     :param fqin: input reads in fastq file
@@ -12,16 +12,17 @@ def plot_read_quality(fqin, plotout):
     :type plotout: file handle or path
     """
 
-    # read in read qualities
+    # get read qualities
     read_quality_strs = [r.letter_annotations['phred_quality']
                          for r in SeqIO.parse(fqin, 'fastq')]
-    quals_per_pos = []
+
+    # preallocate the list of length of longest read
+    max_rlen = max(len(r) for r in read_quality_strs)
+    quals_per_pos = [[] for _ in range(max_rlen)]
+
     for read_qualities in read_quality_strs:
         for pos, base_quality in enumerate(read_qualities):
-            try:
-                quals_per_pos[pos].append(base_quality)
-            except IndexError:
-                quals_per_pos.append([base_quality])
+            quals_per_pos[pos].append(base_quality)
 
     # make a plot
     ## make ticks every 10 nucleotides
