@@ -67,7 +67,7 @@ def plot_mean_quality_distribution(fqin, plotout):
         raise
     mean_read_qualities = [np.mean(q) for q in reads_base_quals]
     nbins = np.ceil(max(mean_read_qualities) - min(mean_read_qualities))
-    n, bins = plt.hist(mean_read_qualities, nbins)
+    plt.hist(mean_read_qualities, nbins)
     plt.title('Mean read phred quality distribution.')
     plt.xlabel('Mean read quality')
     plt.ylabel('Number of reads')

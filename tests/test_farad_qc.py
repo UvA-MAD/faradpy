@@ -8,7 +8,7 @@ sys.path.append('../')
 import farad.qc as fqc
 
 
-class TestFaradQCDefault():
+class FaradQCPlottingTest():
     """Basic farad.qc testing class.
 
     Setups and treardown for farad.qc testing.
@@ -36,21 +36,19 @@ class TestFaradQCDefault():
                        and f.endswith(output_suffixes)]
         [os.remove(os.path.join(self.test_dir, f)) for f in for_removal]
 
-
-class TestPlotQUalitiesAlongRead(TestFaradQCDefault):
-    """Test plot_qualities_along_read function in farad.qc module"""
     def test_exception_on_wrong_input(self):
-        """Should throw an exception if input fastq file does not exist."""
+        """Exception should be trown in case of invalid (nonexisting) input."""
         nt.assert_raises(FileNotFoundError,
-                         fqc.plot_qualities_along_read,
+                         self.tested_function,
                          self.invalid_input_fq,
                          self.output_plot)
+        print('in inherited method')
 
     def test_exception_on_wrong_output_path(self):
         """Should trow an exception if path for output file does not exist."""
 
         nt.assert_raises(FileNotFoundError,
-                         fqc.plot_qualities_along_read,
+                         self.tested_function,
                          self.sample_fq1,
                          self.invalid_output_png)
 
@@ -60,3 +58,19 @@ class TestPlotQUalitiesAlongRead(TestFaradQCDefault):
         fqc.plot_qualities_along_read(self.sample_fq1, self.output_plot)
         file_exists = os.path.exists(self.output_plot)
         nt.assert_true(file_exists)
+
+
+class TestPlotQUalitiesAlongRead(FaradQCPlottingTest):
+    """Test plot_qualities_along_read function in farad.qc module"""
+
+    def __init__(self):
+        # each class tests different functions but usually the same way
+        self.tested_function = fqc.plot_qualities_along_read
+
+
+class TestPlotMeanQualityDistribution(FaradQCPlottingTest):
+    """Test plot_qualities_along_read function in farad.qc module"""
+
+    def __init__(self):
+        # each class tests different functions but usually the same way
+        self.tested_function = fqc.plot_mean_quality_distribution
