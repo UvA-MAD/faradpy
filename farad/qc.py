@@ -1,6 +1,12 @@
 from Bio import SeqIO
 import matplotlib.pyplot as plt
 import numpy as np
+import logging
+
+
+# setup module logger
+log = logging.getLogger(__name__)
+log.addHandler(logging.NullHandler())
 
 
 def plot_qualities_along_read(fqin, plotout):
@@ -13,8 +19,12 @@ def plot_qualities_along_read(fqin, plotout):
     """
 
     # get read qualities
-    read_quality_strs = [r.letter_annotations['phred_quality']
-                         for r in SeqIO.parse(fqin, 'fastq')]
+    try:
+        read_quality_strs = [r.letter_annotations['phred_quality']
+                             for r in SeqIO.parse(fqin, 'fastq')]
+    except FileNotFoundError:
+        log.error('Input %s fastq file not found' % fqin)
+        raise
 
     # preallocate the list of length of longest read
     max_rlen = max(len(r) for r in read_quality_strs)
@@ -32,4 +42,37 @@ def plot_qualities_along_read(fqin, plotout):
     plt.title('Phread quality distribution along the read')
     plt.xlabel('Position in the read')
     plt.ylabel('Phred quality score')
-    plt.savefig(plotout)
+    try:
+        plt.savefig(plotout)
+    except FileNotFoundError:
+        log.error('Output filepath "%s" is not valid.' % plotout)
+        raise
+
+
+def plot_mean_quality_distribution(fqin, plotout):
+    """Make a histogram mean quality of the reads
+
+    :param fqin: input reads in fastq file
+    :type fqin: file handle or path
+    :param plotout: file with generated plot
+    :type plotout: file handle or path
+    """
+
+    # get read qualities
+    try:
+        reads_base_quals = [r.letter_annotations['phred_quality']
+                            for r in SeqIO.parse(fqin, 'fastq')]
+    except FileNotFoundError:
+        log.error('Input %s fastq file not found' % fqin)
+        raise
+    mean_read_qualities = [np.mean(q) for q in reads_base_quals]
+    nbins = np.ceil(max(mean_read_qualities) - min(mean_read_qualities))
+    n, bins = plt.hist(mean_read_qualities, nbins)
+    plt.title('Mean read phred quality distribution.')
+    plt.xlabel('Mean read quality')
+    plt.ylabel('Number of reads')
+    try:
+        plt.savefig(plotout)
+    except FileNotFoundError:
+        log.error('Output filepath "%s" is not valid.' % plotout)
+        raise

@@ -1,6 +1,5 @@
 """Tests for farad.qc module"""
 import os
-import re
 import sys
 import nose.tools as nt
 
@@ -8,7 +7,6 @@ import nose.tools as nt
 sys.path.append('../')
 import farad.qc as fqc
 
-# test data
 
 class TestFaradQCDefault():
     """Basic farad.qc testing class.
@@ -19,30 +17,46 @@ class TestFaradQCDefault():
         """Create objects needed for testing"""
         self.test_dir = os.path.split(os.path.abspath(__file__))[0]
         self.sample_fq1 = os.path.join(self.test_dir, 'sample1.fq')
+        self.invalid_input_fq = 'nonexistent.fq'
+        self.invalid_output_png = os.path.join(self.test_dir,
+                                               'not_there',
+                                               'output.png')
+        self.output_plot = os.path.join(self.test_dir,
+                                        'test_plot.png')
 
     def teardown(self):
         """Teardown everything created during tests
 
         Remove created files.
         """
-        file_pattern = r'^test_.*\.fq$'
+        output_prefix = 'test_'
+        output_suffixes = ('.fq', 'png')
         for_removal = [f for f in os.listdir(self.test_dir)
-                       if re.search(file_pattern, f)]
+                       if f.startswith(output_prefix)
+                       and f.endswith(output_suffixes)]
         [os.remove(os.path.join(self.test_dir, f)) for f in for_removal]
+
 
 class TestPlotQUalitiesAlongRead(TestFaradQCDefault):
     """Test plot_qualities_along_read function in farad.qc module"""
     def test_exception_on_wrong_input(self):
-        """Should throw an exception on wrong input file"""
+        """Should throw an exception if input fastq file does not exist."""
+        nt.assert_raises(FileNotFoundError,
+                         fqc.plot_qualities_along_read,
+                         self.invalid_input_fq,
+                         self.output_plot)
 
+    def test_exception_on_wrong_output_path(self):
+        """Should trow an exception if path for output file does not exist."""
 
+        nt.assert_raises(FileNotFoundError,
+                         fqc.plot_qualities_along_read,
+                         self.sample_fq1,
+                         self.invalid_output_png)
 
+    def test_plot_saved(self):
+        """If all goes well a plot file should be saved."""
 
-
-# test for exception if input is not valid fastq file
-#
-# test for exception if output path is not valid
-#
-# test if output file is created in expected path
-#
-
+        fqc.plot_qualities_along_read(self.sample_fq1, self.output_plot)
+        file_exists = os.path.exists(self.output_plot)
+        nt.assert_true(file_exists)
