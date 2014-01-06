@@ -5,7 +5,7 @@ import random
 
 
 # setup module logger
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
 
 
@@ -28,25 +28,25 @@ def downsample(fqin, N, fqout):
     try:
         input_reads = [r for r in SeqIO.parse(fqin, 'fastq')]
     except FileNotFoundError:
-        logger.error('File with input reads not found')
+        log.error('File with input reads not found')
         raise
 
     # fetch a sample
     try:
         sample_reads = random.sample(input_reads, N)
     except ValueError:
-        logger.error('Sample size should be between zero'
+        log.error('Sample size should be between zero'
                      ' and the number of reads in fq file.')
         raise
     except TypeError:
-        logger.error('Sample size should be an integer.')
+        log.error('Sample size should be an integer.')
         raise
 
     # write sample to file fqout
     try:
         SeqIO.write(sample_reads, fqout, 'fastq')
     except FileNotFoundError:
-        logger.error('Provided path for sample reads is not valid.')
+        log.error('Provided path for sample reads is not valid.')
         raise
 
 
