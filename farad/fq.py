@@ -6,13 +6,7 @@ import random
 
 # setup module logger
 logger = logging.getLogger(__name__)
-FORMAT = '%(asctime)s - %(levelname)s - %(message)s'
-# logger.setLevel(logging.INFO)
-handler = logging.StreamHandler()
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter(FORMAT)
-handler.setFormatter(formatter)
-logger.addHandler(handler)
+log.addHandler(logging.NullHandler())
 
 
 def downsample(fqin, N, fqout):
