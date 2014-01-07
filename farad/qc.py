@@ -75,3 +75,31 @@ def plot_mean_quality_distribution(fqin, plotout):
     except FileNotFoundError:
         log.error('Output filepath "%s" is not valid.' % plotout)
         raise
+
+
+def plot_rlen_distribution(fqin, plotout):
+    """Make a histogram of read lenghts
+
+    :param fqin: input reads in fastq file
+    :type fqin: file handle or path
+    :param plotout: file with generated plot
+    :type plotout: file handle or path
+    """
+
+    # get read qualities
+    try:
+        rlens = [len(r) for r in SeqIO.parse(fqin, 'fastq')]
+    except FileNotFoundError:
+        log.error('Input %s fastq file not found' % fqin)
+        raise
+
+    nbins = max(rlens) - min(rlens)
+    plt.hist(rlens, nbins)
+    plt.title('Read length distribution.')
+    plt.xlabel('Read length')
+    plt.ylabel('Number of reads')
+    try:
+        plt.savefig(plotout)
+    except FileNotFoundError:
+        log.error('Output filepath "%s" is not valid.' % plotout)
+        raise
