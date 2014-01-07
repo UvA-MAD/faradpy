@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import logging
 
-
 # setup module logger
 log = logging.getLogger(__name__)
 log.addHandler(logging.NullHandler())
@@ -60,12 +59,12 @@ def plot_mean_quality_distribution(fqin, plotout):
 
     # get read qualities
     try:
-        reads_base_quals = [r.letter_annotations['phred_quality']
-                            for r in SeqIO.parse(fqin, 'fastq')]
+        mean_read_qualities = [np.mean(r.letter_annotations['phred_quality'])
+                               for r in SeqIO.parse(fqin, 'fastq')]
     except FileNotFoundError:
         log.error('Input %s fastq file not found' % fqin)
         raise
-    mean_read_qualities = [np.mean(q) for q in reads_base_quals]
+
     nbins = np.ceil(max(mean_read_qualities) - min(mean_read_qualities))
     plt.hist(mean_read_qualities, nbins)
     plt.title('Mean read phred quality distribution.')
