@@ -64,7 +64,6 @@ class TestPlotQUalitiesAlongRead(FaradQCPlottingTest):
     """Test plot_qualities_along_read function in farad.qc module"""
 
     def __init__(self):
-        # each class tests different functions but usually the same way
         self.tested_function = fqc.plot_qualities_along_read
 
 
@@ -72,5 +71,11 @@ class TestPlotMeanQualityDistribution(FaradQCPlottingTest):
     """Test plot_qualities_along_read function in farad.qc module"""
 
     def __init__(self):
-        # each class tests different functions but usually the same way
         self.tested_function = fqc.plot_mean_quality_distribution
+
+
+class TestPlotRlenDistribution(FaradQCPlottingTest):
+    """Test plot_rlen_distribution function in farad.qc module"""
+
+    def __init__(self):
+        self.tested_function = fqc.plot_rlen_distribution
